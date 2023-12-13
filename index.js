@@ -73,7 +73,7 @@ app.post('/webhook', async (req, res) => {
   try {
     const lineEvent = events[0];
     const lineUserID = lineEvent.source.userId;
-    let commandMessage = 'UserID : ' + lineUserID;
+    let commandMessage = 'UserID : ' + lineUserID + '\n' + 'Message : ' + lineEvent.message.text;
     const response = await sendMessage(lineUserID, commandMessage);
     res.json({
       message: 'Send Message Success',
