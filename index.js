@@ -11,9 +11,6 @@ app.use(express.static('static'));
 require('dotenv').config();
 app.use(cors());
 
-app.use(bodyParser.json()) // for parsing application/json
-app.use(bodyParser.urlencoded({ extended: true }))
-
 const LINE_API_URL = 'https://api.line.me/v2/bot/message/push';
 const LINE_ACCESS_TOKEN = process.env.LINE_ACCESS_TOKEN;
 
