@@ -34,6 +34,7 @@ const sendMessage = async (userUid, message) => {
       {
         type: 'text',
         text: message,
+        wrap: true,
       },
     ],
   };
