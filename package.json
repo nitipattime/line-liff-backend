@@ -1,6 +1,7 @@
 {
   "name": "express-simple-starter",
   "private": true,
+  "main": "index.js",
   "scripts": {
     "start": "node index.js"
   },
