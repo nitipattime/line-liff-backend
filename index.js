@@ -10,7 +10,12 @@ const port = 3010;
 app.use(express.json());
 
 require('dotenv').config();
-app.use(cors());
+
+const corsOptions = {
+  origin: 'https://line-liff-sand.vercel.app/',
+  credentials: true,
+};
+app.use(cors(corsOptions));
 
 const LINE_API_TOKEN_URL = 'https://api.line.me/v2/oauth/accessToken';
 const LINE_API_URL = 'https://api.line.me/v2/bot/message/push';
@@ -28,7 +33,7 @@ const headers = {
   Authorization: `Bearer ${LINE_ACCESS_TOKEN}`,
 };
 
-const sendMessage = async (userUid, message) => {
+const sendMessage = async (userUid, message, accessToken) => {
   const body = {
     to: userUid,
     messages: [
@@ -39,7 +44,16 @@ const sendMessage = async (userUid, message) => {
       },
     ],
   };
-  const response = await axios.post(LINE_API_URL, body, { headers });
+
+  const headersNew = {
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${LINE_ACCESS_TOKEN}`,
+  };
+
+  console.log("accessToken : ")
+  console.dir(accessToken)
+
+  const response = await axios.post(LINE_API_URL, body, { headersNew });
   return response;
 };
 
@@ -62,7 +76,7 @@ app.post('/send-message', async (req, res) => {
     console.log(responseAccessToken)
     // New Code End
 
-    const response = await sendMessage(userUid, message);
+    const response = await sendMessage(userUid, message, responseAccessToken.data);
     console.log('=== LINE log', response.data);
     res.json({
       message: 'Message OK',
