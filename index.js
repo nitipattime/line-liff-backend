@@ -11,29 +11,39 @@ app.use(express.json());
 
 require('dotenv').config();
 
+// const corsOptions = {
+//   origin: 'https://line-liff-sand.vercel.app/',
+//   credentials: true,
+// };
+// app.use(function (req, res, next) {
+
+//   // Website you wish to allow to connect
+//   res.setHeader('Access-Control-Allow-Origin', '*');
+
+//   // Request methods you wish to allow
+//   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+
+//   // Request headers you wish to allow
+//   res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+
+//   // Set to true if you need the website to include cookies in the requests sent
+//   // to the API (e.g. in case you use sessions)
+//   res.setHeader('Access-Control-Allow-Credentials', true);
+
+//   // Pass to next layer of middleware
+//   next();
+// });
+// app.use(cors());
+// app.options('*', cors());
+
 const corsOptions = {
-  origin: 'https://line-liff-sand.vercel.app/',
-  credentials: true,
+  origin: '*', // Replace with your allowed origin
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  credentials: true, // Enable credentials (cookies, authorization headers, etc.)
+  optionsSuccessStatus: 204, // Some legacy browsers (IE11, various SmartTVs) choke on 204
 };
-app.use(cors());
-app.use(function (req, res, next) {
 
-  // Website you wish to allow to connect
-  res.setHeader('Access-Control-Allow-Origin', '*');
-
-  // Request methods you wish to allow
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-
-  // Request headers you wish to allow
-  res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
-
-  // Set to true if you need the website to include cookies in the requests sent
-  // to the API (e.g. in case you use sessions)
-  res.setHeader('Access-Control-Allow-Credentials', true);
-
-  // Pass to next layer of middleware
-  next();
-});
+app.use(cors(corsOptions));
 
 const LINE_API_TOKEN_URL = 'https://api.line.me/v2/oauth/accessToken';
 const LINE_API_URL = 'https://api.line.me/v2/bot/message/push';
@@ -82,9 +92,10 @@ app.post('/send-message', async (req, res) => {
   try {
     // New Code Start
     const bodyAccessToken = {
-      grant_type: 'client_credentials',
-      client_id: '1657087554',
-      client_secret: '4329ae075f1c36f68af690defab1306d',
+      // grant_type: 'client_credentials',
+      'grant_type': 'authorization_code',
+      'client_id': '1657087554',
+      'client_secret': '4329ae075f1c36f68af690defab1306d',
     };
 
     const headersAccessToken = {
