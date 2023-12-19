@@ -12,6 +12,7 @@ app.use(express.json());
 require('dotenv').config();
 app.use(cors());
 
+const LINE_API_TOKEN_URL = 'https://api.line.me/v2/oauth/accessToken';
 const LINE_API_URL = 'https://api.line.me/v2/bot/message/push';
 const LINE_ACCESS_TOKEN = process.env.LINE_ACCESS_TOKEN;
 
@@ -47,6 +48,20 @@ app.post('/send-message', async (req, res) => {
   console.log(userUid);
   console.log(message);
   try {
+    // New Code Start
+    const bodyAccessToken = {
+      grant_type: 'client_credentials',
+      client_id: '1657087554',
+      client_secret: '4329ae075f1c36f68af690defab1306d',
+    };
+
+    const headersAccessToken = {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    };
+    const responseAccessToken = await axios.post(LINE_API_TOKEN_URL, bodyAccessToken, { headersAccessToken });
+    console.log(responseAccessToken)
+    // New Code End
+
     const response = await sendMessage(userUid, message);
     console.log('=== LINE log', response.data);
     res.json({
