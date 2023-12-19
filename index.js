@@ -89,33 +89,33 @@ app.post('/send-message', async (req, res) => {
   const { userUid, message } = req.body;
   console.log(userUid);
   console.log(message);
-  try {
-    // New Code Start
-    const bodyAccessToken = {
-      // grant_type: 'client_credentials',
-      'grant_type': 'authorization_code',
-      'client_id': '1657087554',
-      'client_secret': '4329ae075f1c36f68af690defab1306d',
-    };
+  // try {
+  //   // New Code Start
+  //   const bodyAccessToken = {
+  //     // grant_type: 'client_credentials',
+  //     'grant_type': 'authorization_code',
+  //     'client_id': '1657087554',
+  //     'client_secret': '4329ae075f1c36f68af690defab1306d',
+  //   };
 
-    const headersAccessToken = {
-      'Content-Type': 'application/x-www-form-urlencoded'
-    };
-    const responseAccessToken = await axios.post(LINE_API_TOKEN_URL, bodyAccessToken, { headersAccessToken });
-    console.log(responseAccessToken)
-    // New Code End
+  //   const headersAccessToken = {
+  //     'Content-Type': 'application/x-www-form-urlencoded'
+  //   };
+  //   const responseAccessToken = await axios.post(LINE_API_TOKEN_URL, bodyAccessToken, { headersAccessToken });
+  //   console.log(responseAccessToken)
+  //   // New Code End
 
-    const response = await sendMessage(userUid, message, responseAccessToken.data);
-    console.log('=== LINE log', response.data);
-    res.json({
-      message: 'Message OK',
-    });
-  } catch (error) {
-    console.log('error', error.response.data);
-    res.status(400).json({
-      error: error.response,
-    });
-  }
+  //   const response = await sendMessage(userUid, message, responseAccessToken.data);
+  //   console.log('=== LINE log', response.data);
+  //   res.json({
+  //     message: 'Message OK',
+  //   });
+  // } catch (error) {
+  //   console.log('error', error.response.data);
+  //   res.status(400).json({
+  //     error: error.response,
+  //   });
+  // }
 });
 
 app.post('/webhook', async (req, res) => {
