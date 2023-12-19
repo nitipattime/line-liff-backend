@@ -89,6 +89,10 @@ app.post('/send-message', async (req, res) => {
   const { userUid, message } = req.body;
   console.log(userUid);
   console.log(message);
+  res.json({
+    userUid: userUid,
+    message: message,
+  });
   // try {
   //   // New Code Start
   //   const bodyAccessToken = {
