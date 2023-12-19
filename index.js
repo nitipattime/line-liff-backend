@@ -15,7 +15,7 @@ const corsOptions = {
   origin: 'https://line-liff-sand.vercel.app/',
   credentials: true,
 };
-app.use(cors(corsOptions));
+app.use(cors({origin: '*'}));
 
 const LINE_API_TOKEN_URL = 'https://api.line.me/v2/oauth/accessToken';
 const LINE_API_URL = 'https://api.line.me/v2/bot/message/push';
