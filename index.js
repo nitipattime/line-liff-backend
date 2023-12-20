@@ -2,50 +2,20 @@ const express = require('express');
 const { resolve } = require('path');
 const axios = require('axios');
 const cors = require('cors');
+var bodyParser = require('body-parser');
 
 const app = express();
 const port = 3010;
 
 // app.use(express.static('static'));
 app.use(express.json());
+app.use(bodyParser.json());
+app.use(express.urlencoded({ extended: true }));
 
 require('dotenv').config();
+app.use(cors());
 
-// const corsOptions = {
-//   origin: 'https://line-liff-sand.vercel.app/',
-//   credentials: true,
-// };
-// app.use(function (req, res, next) {
-
-//   // Website you wish to allow to connect
-//   res.setHeader('Access-Control-Allow-Origin', '*');
-
-//   // Request methods you wish to allow
-//   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-
-//   // Request headers you wish to allow
-//   res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
-
-//   // Set to true if you need the website to include cookies in the requests sent
-//   // to the API (e.g. in case you use sessions)
-//   res.setHeader('Access-Control-Allow-Credentials', true);
-
-//   // Pass to next layer of middleware
-//   next();
-// });
-// app.use(cors());
-// app.options('*', cors());
-
-const corsOptions = {
-  origin: '*', // Replace with your allowed origin
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  credentials: true, // Enable credentials (cookies, authorization headers, etc.)
-  optionsSuccessStatus: 204, // Some legacy browsers (IE11, various SmartTVs) choke on 204
-};
-
-app.use(cors(corsOptions));
-
-const LINE_API_TOKEN_URL = 'https://api.line.me/v2/oauth/accessToken';
+const LINE_MODULE_URI_ACCESSTOKENURL= 'https://api.line.me/v2/oauth/accessToken'
 const LINE_API_URL = 'https://api.line.me/v2/bot/message/push';
 const LINE_ACCESS_TOKEN = process.env.LINE_ACCESS_TOKEN;
 
@@ -56,64 +26,66 @@ app.get('/', (req, res) => {
   });
 });
 
-const headers = {
-  'Content-Type': 'application/json',
-  Authorization: `Bearer ${LINE_ACCESS_TOKEN}`,
+// const headers = {
+//   'Content-Type': 'application/json',
+//   Authorization: `Bearer ${LINE_ACCESS_TOKEN}`,
+// };
+
+const getAccessToken = async () => {
+  const body = {
+    'grant_type': 'client_credentials',
+    'client_id': '1656289362',
+    'client_secret': '2e7adad4e2e3ec78721848e23d2ecd88',
+  };
+
+  const headers = {
+    'Content-Type': 'application/x-www-form-urlencoded',
+  };
+
+  console.dir(headers)
+
+  const response = await axios.post(LINE_MODULE_URI_ACCESSTOKENURL, body, { headers });
+  return response;
 };
+
 
 const sendMessage = async (userUid, message, accessToken) => {
   const body = {
-    to: userUid,
-    messages: [
+    'to': userUid,
+    'messages': [
       {
-        type: 'text',
-        text: message,
-        wrap: true,
+        'type': 'text',
+        'text': message,
+        'wrap': true,
       },
     ],
   };
 
-  const headersNew = {
+  const headers = {
     'Content-Type': 'application/json',
-    Authorization: `Bearer ${LINE_ACCESS_TOKEN}`,
+    'X-Line-Bot-Id': 'U01933a9bed6c888470e6b6bba7a9932d',
+    'Authorization': `Bearer ${accessToken}`,
   };
 
-  console.log("accessToken : ")
-  console.dir(accessToken)
+  console.dir(headers)
 
-  const response = await axios.post(LINE_API_URL, body, { headersNew });
+  const response = await axios.post(LINE_API_URL, body, { headers });
   return response;
 };
 
 app.post('/send-message', async (req, res) => {
-  const { userUid, message } = req.body;
+  const { userUid, message, accessToken } = req.body;
   console.log(userUid);
   console.log(message);
-  // res.json({
-  //   userUid: userUid,
-  //   message: message,
-  // });
+  const accesstoken = await getAccessToken();
+  // console.dir(accesstoken)
+  console.log('accesstoken : '+accesstoken.data.access_token)
+
   try {
-    // New Code Start
-    const bodyAccessToken = {
-      // grant_type: 'client_credentials',
-      'grant_type': 'authorization_code',
-      'client_id': '1657087554',
-      'client_secret': '4329ae075f1c36f68af690defab1306d',
-    };
-
-    const headersAccessToken = {
-      'Content-Type': 'application/x-www-form-urlencoded'
-    };
-    const responseAccessToken = await axios.post(LINE_API_TOKEN_URL, bodyAccessToken, { headersAccessToken });
-    console.log(responseAccessToken)
-    // New Code End
-
-    // const response = await sendMessage(userUid, message, responseAccessToken.data);
-    // console.log('=== LINE log', response.data);
+    const response = await sendMessage(userUid, message, accesstoken.data.access_token);
+    console.log('=== LINE log', response.data);
     res.json({
       message: 'Message OK',
-      log: responseAccessToken,
     });
   } catch (error) {
     console.log('error', error.response.data);
@@ -134,11 +106,13 @@ app.post('/webhook', async (req, res) => {
     return false;
   }
   console.log('event', events);
+
+  const accesstoken = await getAccessToken();
   try {
     const lineEvent = events[0];
     const lineUserID = lineEvent.source.userId;
     let commandMessage = 'UserID : ' + lineUserID + '\n' + 'Message : ' + lineEvent.message.text;
-    const response = await sendMessage(lineUserID, commandMessage);
+    const response = await sendMessage(lineUserID, commandMessage, accesstoken.data.access_token);
     res.json({
       message: 'Send Message Success',
       responseData: response.data,
