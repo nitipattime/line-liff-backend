@@ -63,7 +63,8 @@ const sendMessage = async (userUid, message, accessToken) => {
 
   const headers = {
     'Content-Type': 'application/json',
-    'X-Line-Bot-Id': 'U01933a9bed6c888470e6b6bba7a9932d',
+    // 'X-Line-Bot-Id': 'U01933a9bed6c888470e6b6bba7a9932d',
+    'X-Line-Bot-Id': 'U493fc05deab767a9495a36aaac89f850',
     'Authorization': `Bearer ${accessToken}`,
   };
 
