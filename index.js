@@ -18,6 +18,8 @@ app.use(cors());
 const LINE_MODULE_URI_ACCESSTOKENURL= 'https://api.line.me/v2/oauth/accessToken'
 const LINE_API_URL = 'https://api.line.me/v2/bot/message/push';
 const LINE_ACCESS_TOKEN = process.env.LINE_ACCESS_TOKEN;
+const LINE_CLIENT_ID = process.env.LINE_CLIENT_ID;
+const LINE_CLIENT_SECRET = process.env.LINE_CLIENT_ID;
 
 app.get('/', (req, res) => {
   // res.sendFile(resolve(__dirname, 'pages/index.html'));
@@ -63,8 +65,8 @@ const sendMessage = async (userUid, message, accessToken) => {
 
   const headers = {
     'Content-Type': 'application/json',
-    // 'X-Line-Bot-Id': 'U01933a9bed6c888470e6b6bba7a9932d',
-    'X-Line-Bot-Id': 'U493fc05deab767a9495a36aaac89f850',
+    'X-Line-Bot-Id': 'U01933a9bed6c888470e6b6bba7a9932d',
+    // 'X-Line-Bot-Id': 'U493fc05deab767a9495a36aaac89f850',
     'Authorization': `Bearer ${accessToken}`,
   };
 
