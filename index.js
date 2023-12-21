@@ -118,11 +118,11 @@ app.post('/webhook', async (req, res) => {
     let response
     switch(lineEvent.message.type) {
       case "text":
-        commandMessage = 'UserID : ' + lineUserID + '\n' + 'Message : ' + lineEvent.message.text;
+        commandMessage = 'UserID : ' + lineUserID + '\n' + 'Messages : ' + lineEvent.message.text;
         response = await sendMessage(lineUserID, commandMessage, accesstoken.data.access_token);
         break;
       case "image":
-        commandMessage = 'UserID : ' + lineUserID + '\n' + 'ImageSetID : ' + lineEvent.message.imageSet.id;
+        commandMessage = 'UserID : ' + lineUserID + '\n' + 'ImageSetID : ' + lineEvent.message.id;
         response = await sendMessage(lineUserID, commandMessage, accesstoken.data.access_token);
         break;
     }
