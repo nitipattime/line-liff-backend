@@ -114,8 +114,18 @@ app.post('/webhook', async (req, res) => {
   try {
     const lineEvent = events[0];
     const lineUserID = lineEvent.source.userId;
-    let commandMessage = 'UserID : ' + lineUserID + '\n' + 'Message : ' + lineEvent.message.text;
-    const response = await sendMessage(lineUserID, commandMessage, accesstoken.data.access_token);
+    let commandMessage
+    let response
+    switch(lineEvent.message.type) {
+      case "text":
+        commandMessage = 'UserID : ' + lineUserID + '\n' + 'Message : ' + lineEvent.message.text;
+        response = await sendMessage(lineUserID, commandMessage, accesstoken.data.access_token);
+        break;
+      case "image":
+        commandMessage = 'UserID : ' + lineUserID + '\n' + 'ImageSetID : ' + lineEvent.message.imageSet.id;
+        response = await sendMessage(lineUserID, commandMessage, accesstoken.data.access_token);
+        break;
+    }
     res.json({
       message: 'Send Message Success',
       responseData: response.data,
